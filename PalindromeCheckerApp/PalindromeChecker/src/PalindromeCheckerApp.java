@@ -13,6 +13,21 @@ class Node {
 }
 
 public class PalindromeCheckerApp {
+
+    // UC9: Recursive Helper Method
+    public static boolean isPalindromeRecursive(String str, int start, int end) {
+        // Base Condition: Single character or empty string
+        if (start >= end) {
+            return true;
+        }
+        // Check if characters at start and end match
+        if (str.charAt(start) != str.charAt(end)) {
+            return false;
+        }
+        // Recursive call for the inner substring
+        return isPalindromeRecursive(str, start + 1, end - 1);
+    }
+
     public static void main(String[] args){
         // UC1: Welcome Message & App Details
         System.out.println("========================================");
@@ -136,6 +151,10 @@ public class PalindromeCheckerApp {
             rightSide = rightSide.next;
         }
         System.out.println("UC8 (Linked List) Result: " + (isPalindromeUC8 ? "IS a palindrome" : "is NOT a palindrome"));
+
+        // UC9: Recursive Palindrome Check
+        boolean isPalindromeUC9 = isPalindromeRecursive(cleanInput, 0, cleanInput.length() - 1);
+        System.out.println("UC9 (Recursion) Result: " + (isPalindromeUC9 ? "IS a palindrome" : "is NOT a palindrome"));
 
         System.out.println("Program finished.");
         scanner.close();
