@@ -18,18 +18,14 @@ class PalindromeService {
         if (input == null) return false;
         String clean = input.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
         Stack<Character> stack = new Stack<>();
-        for (char c : clean.toCharArray()) {
-            stack.push(c);
-        }
+        for (char c : clean.toCharArray()) stack.push(c);
         StringBuilder reversed = new StringBuilder();
-        while (!stack.isEmpty()) {
-            reversed.append(stack.pop());
-        }
+        while (!stack.isEmpty()) reversed.append(stack.pop());
         return clean.equals(reversed.toString());
     }
 }
 
-// UC12: Strategy Pattern for Palindrome Algorithms
+// UC12: Strategy Pattern
 interface PalindromeStrategy {
     boolean isValid(String input);
 }
@@ -79,16 +75,15 @@ public class PalindromeCheckerApp {
         System.out.print("Enter a word to check: ");
         String input = scanner.nextLine();
 
-        // UC10: Case-Insensitive & Space-Ignored Preprocessing
+        // UC10: Normalization
         String cleanInput = input.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
-        System.out.println("Normalized String (UC10): " + cleanInput);
+        System.out.println("Normalized String: " + cleanInput);
 
-        // UC3: Palindrome Check Using String Reverse
-        String reversed = "";
-        for (int i = cleanInput.length() - 1; i >= 0; i--) reversed += cleanInput.charAt(i);
-        System.out.println("Reversed string (UC3): " + reversed);
+        // UC13: Performance Comparison Logic
+        System.out.println("\n--- Performance Results (nanoseconds) ---");
 
-        // UC4: Character Array Based Check (Two-Pointer)
+        // UC4: Two-Pointer Timing
+        long startUC4 = System.nanoTime();
         char[] charArray = cleanInput.toCharArray();
         int left = 0, right = charArray.length - 1;
         boolean isPalindromeUC4 = true;
@@ -96,34 +91,38 @@ public class PalindromeCheckerApp {
             if (charArray[left] != charArray[right]) { isPalindromeUC4 = false; break; }
             left++; right--;
         }
+        long endUC4 = System.nanoTime();
+        System.out.println("UC4 (Two-Pointer): " + (endUC4 - startUC4) + " ns | Result: " + isPalindromeUC4);
 
-        // UC5: Stack-Based Palindrome Checker
+        // UC5: Stack Timing
+        long startUC5 = System.nanoTime();
         Stack<Character> stack = new Stack<>();
         for (char c : cleanInput.toCharArray()) stack.push(c);
         StringBuilder stackReversed = new StringBuilder();
         while (!stack.isEmpty()) stackReversed.append(stack.pop());
-        System.out.println("UC5 (Stack) Result: " + (cleanInput.equals(stackReversed.toString()) ? "IS a palindrome" : "is NOT a palindrome"));
+        boolean isPalindromeUC5 = cleanInput.equals(stackReversed.toString());
+        long endUC5 = System.nanoTime();
+        System.out.println("UC5 (Stack):       " + (endUC5 - startUC5) + " ns | Result: " + isPalindromeUC5);
 
-        // UC6 : Queue + Stack Based Palindrome Check
-        Queue<Character> queueUC6 = new LinkedList<>();
-        Stack<Character> stackUC6 = new Stack<>();
-        for (char c : cleanInput.toCharArray()) { queueUC6.add(c); stackUC6.push(c); }
-        boolean isPalindromeUC6 = true;
-        while (!queueUC6.isEmpty()) {
-            if (!queueUC6.remove().equals(stackUC6.pop())) { isPalindromeUC6 = false; break; }
-        }
-        System.out.println("UC6 (Queue + Stack) Result: " + (isPalindromeUC6 ? "IS a palindrome" : "is NOT a palindrome"));
-
-        // UC7: Deque-Based Optimized Palindrome Checker
+        // UC7: Deque Timing
+        long startUC7 = System.nanoTime();
         Deque<Character> dequeUC7 = new ArrayDeque<>();
         for (char c : cleanInput.toCharArray()) dequeUC7.addLast(c);
         boolean isPalindromeUC7 = true;
         while (dequeUC7.size() > 1) {
             if (!dequeUC7.removeFirst().equals(dequeUC7.removeLast())) { isPalindromeUC7 = false; break; }
         }
-        System.out.println("UC7 (Deque-Based) Result: " + (isPalindromeUC7 ? "IS a palindrome" : "is NOT a palindrome"));
+        long endUC7 = System.nanoTime();
+        System.out.println("UC7 (Deque):       " + (endUC7 - startUC7) + " ns | Result: " + isPalindromeUC7);
 
-        // UC8: Linked List Based Palindrome Checker
+        // UC9: Recursion Timing
+        long startUC9 = System.nanoTime();
+        boolean isPalindromeUC9 = isPalindromeRecursive(cleanInput, 0, cleanInput.length() - 1);
+        long endUC9 = System.nanoTime();
+        System.out.println("UC9 (Recursion):   " + (endUC9 - startUC9) + " ns | Result: " + isPalindromeUC9);
+
+        // UC8: Linked List Timing
+        long startUC8 = System.nanoTime();
         Node head = null, tail = null;
         for (char c : cleanInput.toCharArray()) {
             Node newNode = new Node(c);
@@ -142,20 +141,11 @@ public class PalindromeCheckerApp {
             if (leftSide.data != rightSide.data) { isPalindromeUC8 = false; break; }
             leftSide = leftSide.next; rightSide = rightSide.next;
         }
-        System.out.println("UC8 (Linked List) Result: " + (isPalindromeUC8 ? "IS a palindrome" : "is NOT a palindrome"));
+        long endUC8 = System.nanoTime();
+        System.out.println("UC8 (Linked List): " + (endUC8 - startUC8) + " ns | Result: " + isPalindromeUC8);
 
-        // UC9: Recursive Palindrome Check
-        boolean isPalindromeUC9 = isPalindromeRecursive(cleanInput, 0, cleanInput.length() - 1);
-        System.out.println("UC9 (Recursion) Result: " + (isPalindromeUC9 ? "IS a palindrome" : "is NOT a palindrome"));
-
-        // UC11: Object-Oriented Service Check
-        PalindromeService service = new PalindromeService();
-        System.out.println("UC11 (OOPS Service) Result: " + (service.checkPalindrome(input) ? "IS a palindrome" : "is NOT a palindrome"));
-
-        // UC12: Strategy Pattern Implementation
-        PalindromeStrategy strategy = new DequeStrategy();
-        System.out.println("UC12 (Strategy Pattern - Deque) Result: " + (strategy.isValid(cleanInput) ? "IS a palindrome" : "is NOT a palindrome"));
-
+        // Final UI outputs
+        System.out.println("========================================");
         System.out.println("Program finished.");
         scanner.close();
     }
