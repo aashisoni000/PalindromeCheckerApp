@@ -16,15 +16,12 @@ public class PalindromeCheckerApp {
 
     // UC9: Recursive Helper Method
     public static boolean isPalindromeRecursive(String str, int start, int end) {
-        // Base Condition: Single character or empty string
         if (start >= end) {
             return true;
         }
-        // Check if characters at start and end match
         if (str.charAt(start) != str.charAt(end)) {
             return false;
         }
-        // Recursive call for the inner substring
         return isPalindromeRecursive(str, start + 1, end - 1);
     }
 
@@ -40,12 +37,16 @@ public class PalindromeCheckerApp {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter a word to check: ");
         String input = scanner.nextLine();
-        String cleanInput = input.toLowerCase();
+
+        // UC10: Case-Insensitive & Space-Ignored Preprocessing
+        // Normalizes string: to lowercase and removes all non-alphanumeric characters
+        String cleanInput = input.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+        System.out.println("Normalized String (UC10): " + cleanInput);
 
         // UC3: Palindrome Check Using String Reverse (Manual Reversal)
         String reversed = "";
-        for (int i = input.length() - 1; i >= 0; i--) {
-            reversed += input.charAt(i);
+        for (int i = cleanInput.length() - 1; i >= 0; i--) {
+            reversed += cleanInput.charAt(i);
         }
         System.out.println("Reversed string (UC3): " + reversed);
 
@@ -66,7 +67,6 @@ public class PalindromeCheckerApp {
 
         // UC5: Stack-Based Palindrome Checker (LIFO Principle)
         Stack<Character> stack = new Stack<>();
-
         for (char c : cleanInput.toCharArray()) {
             stack.push(c);
         }
@@ -77,9 +77,9 @@ public class PalindromeCheckerApp {
         }
 
         if (cleanInput.equals(stackReversed.toString())) {
-            System.out.println("The string \"" + input + "\" IS a palindrome.");
+            System.out.println("UC5 (Stack) Result: IS a palindrome.");
         } else {
-            System.out.println("The string \"" + input + "\" is NOT a palindrome.");
+            System.out.println("UC5 (Stack) Result: is NOT a palindrome.");
         }
 
         // UC6 : Queue + Stack Based Palindrome Check
@@ -123,14 +123,12 @@ public class PalindromeCheckerApp {
             else { tail.next = newNode; tail = newNode; }
         }
 
-        // Fast and Slow pointer to find middle
         Node slow = head, fast = head;
         while (fast != null && fast.next != null) {
             slow = slow.next;
             fast = fast.next.next;
         }
 
-        // Reverse second half
         Node prev = null, current = slow;
         while (current != null) {
             Node nextNode = current.next;
@@ -139,7 +137,6 @@ public class PalindromeCheckerApp {
             current = nextNode;
         }
 
-        // Compare halves
         Node leftSide = head, rightSide = prev;
         boolean isPalindromeUC8 = true;
         while (rightSide != null) {
