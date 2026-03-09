@@ -1,5 +1,7 @@
 import java.util.Scanner;
-import java.util.Stack; // Required for UC5
+import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class PalindromeCheckerApp {
     public static void main(String[] args){
@@ -41,23 +43,41 @@ public class PalindromeCheckerApp {
         // UC5: Stack-Based Palindrome Checker (LIFO Principle)
         Stack<Character> stack = new Stack<>();
 
-        // Push characters into stack
         for (char c : cleanInput.toCharArray()) {
             stack.push(c);
         }
 
-        // Pop characters to create a reversed version
         StringBuilder stackReversed = new StringBuilder();
         while (!stack.isEmpty()) {
             stackReversed.append(stack.pop());
         }
 
-        // Compare and Final Output
         if (cleanInput.equals(stackReversed.toString())) {
             System.out.println("The string \"" + input + "\" IS a palindrome.");
         } else {
             System.out.println("The string \"" + input + "\" is NOT a palindrome.");
         }
+
+        // UC6 : Queue + Stack Based Palindrome Check
+        Queue<Character> queueUC6 = new LinkedList<>();
+        Stack<Character> stackUC6 = new Stack<>();
+
+        // Enqueue characters to Queue (FIFO) and Push characters to Stack (LIFO)
+        for (char c : cleanInput.toCharArray()) {
+            queueUC6.add(c);
+            stackUC6.push(c);
+        }
+
+        boolean isPalindromeUC6 = true;
+        // Compare front of queue with top of stack
+        while (!queueUC6.isEmpty()) {
+            if (!queueUC6.remove().equals(stackUC6.pop())) {
+                isPalindromeUC6 = false;
+                break;
+            }
+        }
+
+        System.out.println("UC6 (Queue + Stack) Result: " + (isPalindromeUC6 ? "IS a palindrome" : "is NOT a palindrome"));
 
         System.out.println("Program finished.");
         scanner.close();
