@@ -5,6 +5,13 @@ import java.util.Queue;
 import java.util.Deque;
 import java.util.ArrayDeque;
 
+// Helper class for UC8
+class Node {
+    char data;
+    Node next;
+    Node(char data) { this.data = data; }
+}
+
 public class PalindromeCheckerApp {
     public static void main(String[] args){
         // UC1: Welcome Message & App Details
@@ -92,6 +99,43 @@ public class PalindromeCheckerApp {
             }
         }
         System.out.println("UC7 (Deque-Based) Result: " + (isPalindromeUC7 ? "IS a palindrome" : "is NOT a palindrome"));
+
+        // UC8: Linked List Based Palindrome Checker
+        Node head = null, tail = null;
+        for (char c : cleanInput.toCharArray()) {
+            Node newNode = new Node(c);
+            if (head == null) { head = newNode; tail = newNode; }
+            else { tail.next = newNode; tail = newNode; }
+        }
+
+        // Fast and Slow pointer to find middle
+        Node slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Reverse second half
+        Node prev = null, current = slow;
+        while (current != null) {
+            Node nextNode = current.next;
+            current.next = prev;
+            prev = current;
+            current = nextNode;
+        }
+
+        // Compare halves
+        Node leftSide = head, rightSide = prev;
+        boolean isPalindromeUC8 = true;
+        while (rightSide != null) {
+            if (leftSide.data != rightSide.data) {
+                isPalindromeUC8 = false;
+                break;
+            }
+            leftSide = leftSide.next;
+            rightSide = rightSide.next;
+        }
+        System.out.println("UC8 (Linked List) Result: " + (isPalindromeUC8 ? "IS a palindrome" : "is NOT a palindrome"));
 
         System.out.println("Program finished.");
         scanner.close();
